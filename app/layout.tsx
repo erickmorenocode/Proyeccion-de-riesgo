@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Proyeccion de Riesgo",
-  description: "Dashboard de proyeccion de riesgo de portafolio",
+  title: "Synergy Apex Partners | Proyeccion de Riesgo",
+  description: "Dashboard de proyeccion de riesgo de portafolio — Synergy Apex Partners",
 };
 
 export default function RootLayout({
