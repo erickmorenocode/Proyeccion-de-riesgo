@@ -1,7 +1,7 @@
 export default function BrandHeader() {
   return (
     <div
-      className="px-6 py-3 flex items-center gap-3 border-b"
+      className="px-6 py-3 flex items-center justify-center border-b"
       style={{ backgroundColor: '#0d1b2a', borderColor: '#1a2f45' }}
     >
       <img
