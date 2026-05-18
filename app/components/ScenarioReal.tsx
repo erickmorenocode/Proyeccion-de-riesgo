@@ -43,22 +43,33 @@ interface CustomTooltipProps {
 }
 
 function simulatePortfolio(raw: RawPoint[]): ChartPoint[] {
+  let portfolioValue = 100;
   const sp500Start = raw[0].close;
 
-  return raw.map((point) => {
+  return raw.map((point, i) => {
     const sp500Normalized = (point.close / sp500Start) * 100;
     const sp500TotalReturn = sp500Normalized - 100;
 
-    const portfolio =
-      sp500TotalReturn >= 0
-        ? 100 + sp500TotalReturn * UPSIDE_BETA
-        : 100 + sp500TotalReturn * DOWNSIDE_CAPTURE;
+    if (i === 0) {
+      return { date: point.date, timestamp: point.timestamp, sp500: 100, portfolio: 100 };
+    }
+
+    const dailyReturn = (point.close - raw[i - 1].close) / raw[i - 1].close;
+
+    if (dailyReturn >= 0) {
+      // Upside unchanged: portfolio = 100 + totalReturn * 2x
+      portfolioValue = 100 + sp500TotalReturn * UPSIDE_BETA;
+    } else {
+      // Downside: 0.5x applied to daily move from current portfolio value
+      // Guarantees drawdown from peak ≈ 0.5x SP500 drawdown from peak
+      portfolioValue *= 1 + dailyReturn * DOWNSIDE_CAPTURE;
+    }
 
     return {
       date: point.date,
       timestamp: point.timestamp,
       sp500: parseFloat(sp500Normalized.toFixed(2)),
-      portfolio: parseFloat(portfolio.toFixed(2)),
+      portfolio: parseFloat(portfolioValue.toFixed(2)),
     };
   });
 }
@@ -117,8 +128,7 @@ function StatCard({ label, value, sub, accent = 'neutral' }: StatCardProps) {
 }
 
 export default function ScenarioReal() {
-  const [startYear, setStartYear] = useState(2015);
-  const [endYear, setEndYear] = useState(CURRENT_YEAR);
+  const [year, setYear] = useState(CURRENT_YEAR - 1);
   const [rawData, setRawData] = useState<RawPoint[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -130,8 +140,8 @@ export default function ScenarioReal() {
       setLoading(true);
       setError(null);
       try {
-        const from = `${startYear}-01-01`;
-        const to = `${endYear}-12-31`;
+        const from = `${year}-01-01`;
+        const to = `${year}-12-31`;
         const res = await fetch(`/api/sp500?from=${from}&to=${to}`);
         if (!res.ok) throw new Error('Error al obtener datos del SP500');
         const data: RawPoint[] = await res.json();
@@ -145,7 +155,7 @@ export default function ScenarioReal() {
 
     load();
     return () => { cancelled = true; };
-  }, [startYear, endYear]);
+  }, [year]);
 
   const chartData = useMemo(() => {
     if (!rawData.length) return [];
@@ -163,16 +173,15 @@ export default function ScenarioReal() {
     };
   }, [chartData]);
 
-  const annualTicks = useMemo(() => {
+  const monthlyTicks = useMemo(() => {
     const ticks: number[] = [];
-    for (let y = startYear; y <= endYear; y++) {
-      ticks.push(new Date(`${y}-01-01`).getTime());
+    for (let m = 0; m < 12; m++) {
+      ticks.push(new Date(year, m, 1).getTime());
     }
     return ticks;
-  }, [startYear, endYear]);
+  }, [year]);
 
-  const startYearOptions = Array.from({ length: CURRENT_YEAR - 1990 }, (_, i) => 1990 + i);
-  const endYearOptions = Array.from({ length: CURRENT_YEAR - startYear + 1 }, (_, i) => startYear + 1 + i);
+  const yearOptions = Array.from({ length: CURRENT_YEAR - 1990 }, (_, i) => 1990 + i);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6">
@@ -185,37 +194,18 @@ export default function ScenarioReal() {
           </p>
         </div>
 
-        {/* Year selectors */}
+        {/* Year selector */}
         <div className="flex flex-wrap items-end gap-4 mb-8">
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
             <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Año inicio
+              Año
             </label>
             <select
-              value={startYear}
-              onChange={(e) => {
-                const y = Number(e.target.value);
-                setStartYear(y);
-                if (endYear <= y) setEndYear(y + 1);
-              }}
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value))}
               className="bg-gray-800 text-white text-lg font-bold rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors"
             >
-              {startYearOptions.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Año fin
-            </label>
-            <select
-              value={endYear}
-              onChange={(e) => setEndYear(Number(e.target.value))}
-              className="bg-gray-800 text-white text-lg font-bold rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors"
-            >
-              {endYearOptions.map((y) => (
+              {yearOptions.map((y) => (
                 <option key={y} value={y}>{y}</option>
               ))}
             </select>
@@ -244,9 +234,7 @@ export default function ScenarioReal() {
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-600 mb-6">
-            {startYear} – {endYear}
-          </p>
+          <p className="text-xs text-gray-600 mb-6">{year}</p>
 
           {loading ? (
             <div className="flex items-center justify-center h-80 text-gray-600 text-sm">
@@ -261,8 +249,8 @@ export default function ScenarioReal() {
                   type="number"
                   scale="time"
                   domain={['dataMin', 'dataMax']}
-                  ticks={annualTicks}
-                  tickFormatter={(ts: number) => new Date(ts).getFullYear().toString()}
+                  ticks={monthlyTicks}
+                  tickFormatter={(ts: number) => new Date(ts).toLocaleDateString('es-MX', { month: 'short' })}
                   stroke="#374151"
                   tick={{ fill: '#6b7280', fontSize: 12 }}
                 />
@@ -309,7 +297,7 @@ export default function ScenarioReal() {
             <StatCard
               label="Retorno SP500"
               value={`${stats.sp500Return >= 0 ? '+' : ''}${stats.sp500Return.toFixed(1)}%`}
-              sub={`${startYear} - ${endYear}`}
+              sub={`${year}`}
               accent={stats.sp500Return >= 0 ? 'green' : 'red'}
             />
             <StatCard
