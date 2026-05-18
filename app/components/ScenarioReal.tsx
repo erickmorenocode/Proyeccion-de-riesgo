@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ReferenceLine,
   ResponsiveContainer,
 } from 'recharts';
 
@@ -338,11 +339,12 @@ export default function ScenarioReal() {
                   tick={{ fill: '#6b7280', fontSize: 12 }}
                 />
                 <YAxis
-                  tickFormatter={(v: number) => v.toFixed(0)}
+                  tickFormatter={(v: number) => `${v - 100 >= 0 ? '+' : ''}${(v - 100).toFixed(0)}%`}
                   stroke="#374151"
                   tick={{ fill: '#6b7280', fontSize: 11 }}
-                  width={55}
+                  width={60}
                 />
+                <ReferenceLine y={100} stroke="#374151" strokeDasharray="4 4" />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend
                   wrapperStyle={{ color: '#6b7280', fontSize: '12px', paddingTop: '16px' }}
