@@ -7,11 +7,8 @@ export default function BrandHeader() {
       <img
         src="/logo_synergy.png"
         alt="Synergy Apex Partners"
-        className="h-9 w-auto"
+        className="h-10 w-auto"
       />
-      <span className="text-white font-semibold text-sm tracking-wide">
-        Synergy Apex Partners
-      </span>
     </div>
   );
 }
