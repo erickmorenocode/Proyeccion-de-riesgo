@@ -43,33 +43,29 @@ interface CustomTooltipProps {
 }
 
 function simulatePortfolio(raw: RawPoint[]): ChartPoint[] {
-  let portfolioValue = 100;
+  let sp500Peak = 100;
   const sp500Start = raw[0].close;
 
-  return raw.map((point, i) => {
+  return raw.map((point) => {
     const sp500Normalized = (point.close / sp500Start) * 100;
-    const sp500TotalReturn = sp500Normalized - 100;
 
-    if (i === 0) {
-      return { date: point.date, timestamp: point.timestamp, sp500: 100, portfolio: 100 };
-    }
+    if (sp500Normalized > sp500Peak) sp500Peak = sp500Normalized;
 
-    const dailyReturn = (point.close - raw[i - 1].close) / raw[i - 1].close;
+    // Portfolio peak = upside formula applied at SP500's running peak (return unchanged)
+    const portfolioPeak = 100 + (sp500Peak - 100) * UPSIDE_BETA;
 
-    if (dailyReturn >= 0) {
-      // Upside unchanged: portfolio = 100 + totalReturn * 2x
-      portfolioValue = 100 + sp500TotalReturn * UPSIDE_BETA;
-    } else {
-      // Downside: 0.5x applied to daily move from current portfolio value
-      // Guarantees drawdown from peak ≈ 0.5x SP500 drawdown from peak
-      portfolioValue *= 1 + dailyReturn * DOWNSIDE_CAPTURE;
-    }
+    // SP500 drawdown from its running peak
+    const sp500DrawdownFromPeak = (sp500Peak - sp500Normalized) / sp500Peak;
+
+    // Portfolio applies exactly 0.5x to that drawdown
+    // Guarantees: portfolio max drawdown = 0.5x SP500 max drawdown at every point
+    const portfolio = portfolioPeak * (1 - sp500DrawdownFromPeak * DOWNSIDE_CAPTURE);
 
     return {
       date: point.date,
       timestamp: point.timestamp,
       sp500: parseFloat(sp500Normalized.toFixed(2)),
-      portfolio: parseFloat(portfolioValue.toFixed(2)),
+      portfolio: parseFloat(portfolio.toFixed(2)),
     };
   });
 }
