@@ -43,26 +43,22 @@ interface CustomTooltipProps {
 }
 
 function simulatePortfolio(raw: RawPoint[]): ChartPoint[] {
-  let portfolioValue = 100;
   const sp500Start = raw[0].close;
 
-  return raw.map((point, i) => {
+  return raw.map((point) => {
     const sp500Normalized = (point.close / sp500Start) * 100;
+    const sp500TotalReturn = sp500Normalized - 100;
 
-    if (i === 0) {
-      return { date: point.date, timestamp: point.timestamp, sp500: 100, portfolio: 100 };
-    }
-
-    const dailyReturn = (point.close - raw[i - 1].close) / raw[i - 1].close;
-    const portfolioReturn =
-      dailyReturn >= 0 ? dailyReturn * UPSIDE_BETA : dailyReturn * DOWNSIDE_CAPTURE;
-    portfolioValue *= 1 + portfolioReturn;
+    const portfolio =
+      sp500TotalReturn >= 0
+        ? 100 + sp500TotalReturn * UPSIDE_BETA
+        : 100 + sp500TotalReturn * DOWNSIDE_CAPTURE;
 
     return {
       date: point.date,
       timestamp: point.timestamp,
       sp500: parseFloat(sp500Normalized.toFixed(2)),
-      portfolio: parseFloat(portfolioValue.toFixed(2)),
+      portfolio: parseFloat(portfolio.toFixed(2)),
     };
   });
 }
