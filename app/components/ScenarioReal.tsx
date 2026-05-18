@@ -124,7 +124,10 @@ function StatCard({ label, value, sub, accent = 'neutral' }: StatCardProps) {
 }
 
 export default function ScenarioReal() {
+  const [mode, setMode] = useState<'year' | 'range'>('year');
   const [year, setYear] = useState(CURRENT_YEAR - 1);
+  const [fromDate, setFromDate] = useState(`${CURRENT_YEAR - 2}-01-01`);
+  const [toDate, setToDate] = useState(`${CURRENT_YEAR - 1}-12-31`);
   const [rawData, setRawData] = useState<RawPoint[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -136,8 +139,8 @@ export default function ScenarioReal() {
       setLoading(true);
       setError(null);
       try {
-        const from = `${year}-01-01`;
-        const to = `${year}-12-31`;
+        const from = mode === 'year' ? `${year}-01-01` : fromDate;
+        const to   = mode === 'year' ? `${year}-12-31` : toDate;
         const res = await fetch(`/api/sp500?from=${from}&to=${to}`);
         if (!res.ok) throw new Error('Error al obtener datos del SP500');
         const data: RawPoint[] = await res.json();
@@ -151,7 +154,7 @@ export default function ScenarioReal() {
 
     load();
     return () => { cancelled = true; };
-  }, [year]);
+  }, [mode, year, fromDate, toDate]);
 
   const chartData = useMemo(() => {
     if (!rawData.length) return [];
@@ -169,13 +172,30 @@ export default function ScenarioReal() {
     };
   }, [chartData]);
 
-  const monthlyTicks = useMemo(() => {
+  const xTicks = useMemo(() => {
+    if (mode === 'year') {
+      return Array.from({ length: 12 }, (_, m) => new Date(year, m, 1).getTime());
+    }
+    const start = new Date(fromDate);
+    const end = new Date(toDate);
+    const months =
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      end.getMonth() - start.getMonth();
+    if (months <= 14) {
+      const ticks: number[] = [];
+      const d = new Date(start.getFullYear(), start.getMonth(), 1);
+      while (d <= end) {
+        ticks.push(d.getTime());
+        d.setMonth(d.getMonth() + 1);
+      }
+      return ticks;
+    }
     const ticks: number[] = [];
-    for (let m = 0; m < 12; m++) {
-      ticks.push(new Date(year, m, 1).getTime());
+    for (let y = start.getFullYear(); y <= end.getFullYear(); y++) {
+      ticks.push(new Date(y, 0, 1).getTime());
     }
     return ticks;
-  }, [year]);
+  }, [mode, year, fromDate, toDate]);
 
   const yearOptions = Array.from({ length: CURRENT_YEAR - 1990 }, (_, i) => 1990 + i);
 
@@ -190,22 +210,78 @@ export default function ScenarioReal() {
           </p>
         </div>
 
-        {/* Year selector */}
+        {/* Date selector */}
         <div className="flex flex-wrap items-end gap-4 mb-8">
+          {/* Mode toggle */}
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
             <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Año
+              Modo
             </label>
-            <select
-              value={year}
-              onChange={(e) => setYear(Number(e.target.value))}
-              className="bg-gray-800 text-white text-lg font-bold rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors"
-            >
-              {yearOptions.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setMode('year')}
+                className={`px-3 py-1 rounded-lg text-sm font-semibold border transition-colors ${
+                  mode === 'year'
+                    ? 'bg-blue-600 border-blue-500 text-white'
+                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
+                }`}
+              >
+                Año
+              </button>
+              <button
+                onClick={() => setMode('range')}
+                className={`px-3 py-1 rounded-lg text-sm font-semibold border transition-colors ${
+                  mode === 'range'
+                    ? 'bg-blue-600 border-blue-500 text-white'
+                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
+                }`}
+              >
+                Rango
+              </button>
+            </div>
           </div>
+
+          {mode === 'year' ? (
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                Año
+              </label>
+              <select
+                value={year}
+                onChange={(e) => setYear(Number(e.target.value))}
+                className="bg-gray-800 text-white text-lg font-bold rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors"
+              >
+                {yearOptions.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  Desde
+                </label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="bg-gray-800 text-white rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  Hasta
+                </label>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="bg-gray-800 text-white rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors text-sm"
+                />
+              </div>
+            </div>
+          )}
 
           {loading && (
             <div className="text-gray-500 text-sm pb-4 animate-pulse">Cargando datos...</div>
@@ -230,7 +306,9 @@ export default function ScenarioReal() {
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-600 mb-6">{year}</p>
+          <p className="text-xs text-gray-600 mb-6">
+            {mode === 'year' ? year : `${fromDate} — ${toDate}`}
+          </p>
 
           {loading ? (
             <div className="flex items-center justify-center h-80 text-gray-600 text-sm">
@@ -245,8 +323,17 @@ export default function ScenarioReal() {
                   type="number"
                   scale="time"
                   domain={['dataMin', 'dataMax']}
-                  ticks={monthlyTicks}
-                  tickFormatter={(ts: number) => new Date(ts).toLocaleDateString('es-MX', { month: 'short' })}
+                  ticks={xTicks}
+                  tickFormatter={(ts: number) => {
+                    const d = new Date(ts);
+                    if (mode === 'range') {
+                      const start = new Date(fromDate);
+                      const end = new Date(toDate);
+                      const months = (end.getFullYear() - start.getFullYear()) * 12 + end.getMonth() - start.getMonth();
+                      if (months > 14) return String(d.getFullYear());
+                    }
+                    return d.toLocaleDateString('es-MX', { month: 'short' });
+                  }}
                   stroke="#374151"
                   tick={{ fill: '#6b7280', fontSize: 12 }}
                 />
@@ -293,7 +380,7 @@ export default function ScenarioReal() {
             <StatCard
               label="Retorno SP500"
               value={`${stats.sp500Return >= 0 ? '+' : ''}${stats.sp500Return.toFixed(1)}%`}
-              sub={`${year}`}
+              sub={mode === 'year' ? `${year}` : `${fromDate.slice(0,4)}–${toDate.slice(0,4)}`}
               accent={stats.sp500Return >= 0 ? 'green' : 'red'}
             />
             <StatCard
