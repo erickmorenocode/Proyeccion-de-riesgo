@@ -12,7 +12,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 export default function TabNav({ active, onChange }: TabNavProps) {
   return (
-    <div className="border-b px-6 pt-5" style={{ backgroundColor: '#0d1b2a', borderColor: '#1a2f45' }}>
+    <div className="border-b px-6 pt-5" style={{ backgroundColor: '#104063', borderColor: '#1B6CA7' }}>
       <div className="max-w-6xl mx-auto flex gap-1">
         {TABS.map((tab) => (
           <button
