@@ -214,8 +214,8 @@ export default function ScenarioReal() {
         {/* Date selector */}
         <div className="flex flex-wrap items-end gap-4 mb-8">
           {/* Mode toggle */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+          <div className="border rounded-xl p-4" style={{ backgroundColor: '#EEF7FC', borderColor: '#1B6CA7' }}>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>
               Modo
             </label>
             <div className="flex gap-2">
@@ -223,9 +223,10 @@ export default function ScenarioReal() {
                 onClick={() => setMode('year')}
                 className={`px-3 py-1 rounded-lg text-sm font-semibold border transition-colors ${
                   mode === 'year'
-                    ? 'bg-blue-600 border-blue-500 text-white'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
+                    ? 'text-white'
+                    : 'bg-white border-gray-300 text-gray-600 hover:border-blue-400'
                 }`}
+                style={mode === 'year' ? { backgroundColor: '#104063', borderColor: '#104063' } : {}}
               >
                 Año
               </button>
@@ -233,9 +234,10 @@ export default function ScenarioReal() {
                 onClick={() => setMode('range')}
                 className={`px-3 py-1 rounded-lg text-sm font-semibold border transition-colors ${
                   mode === 'range'
-                    ? 'bg-blue-600 border-blue-500 text-white'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
+                    ? 'text-white'
+                    : 'bg-white border-gray-300 text-gray-600 hover:border-blue-400'
                 }`}
+                style={mode === 'range' ? { backgroundColor: '#104063', borderColor: '#104063' } : {}}
               >
                 Rango
               </button>
@@ -243,14 +245,15 @@ export default function ScenarioReal() {
           </div>
 
           {mode === 'year' ? (
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+            <div className="border rounded-xl p-4" style={{ backgroundColor: '#EEF7FC', borderColor: '#1B6CA7' }}>
+              <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>
                 Año
               </label>
               <select
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="bg-gray-800 text-white text-lg font-bold rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors"
+                className="text-lg font-bold rounded-lg px-3 py-1 outline-none border focus:border-blue-500 transition-colors bg-white"
+                style={{ color: '#104063', borderColor: '#1B6CA7' }}
               >
                 {yearOptions.map((y) => (
                   <option key={y} value={y}>{y}</option>
@@ -258,27 +261,29 @@ export default function ScenarioReal() {
               </select>
             </div>
           ) : (
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex gap-4">
+            <div className="border rounded-xl p-4 flex gap-4" style={{ backgroundColor: '#EEF7FC', borderColor: '#1B6CA7' }}>
               <div>
-                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>
                   Desde
                 </label>
                 <input
                   type="date"
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
-                  className="bg-gray-800 text-white rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors text-sm"
+                  className="bg-white rounded-lg px-3 py-1 outline-none border focus:border-blue-500 transition-colors text-sm"
+                  style={{ color: '#104063', borderColor: '#1B6CA7' }}
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>
                   Hasta
                 </label>
                 <input
                   type="date"
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
-                  className="bg-gray-800 text-white rounded-lg px-3 py-1 outline-none border border-gray-700 focus:border-blue-500 transition-colors text-sm"
+                  className="bg-white rounded-lg px-3 py-1 outline-none border focus:border-blue-500 transition-colors text-sm"
+                  style={{ color: '#104063', borderColor: '#1B6CA7' }}
                 />
               </div>
             </div>
@@ -296,29 +301,29 @@ export default function ScenarioReal() {
         )}
 
         {/* Chart */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
+        <div className="border rounded-xl p-6 mb-6" style={{ backgroundColor: '#EEF7FC', borderColor: '#1B6CA7' }}>
           <div className="flex items-baseline justify-between mb-1">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-              Rendimiento acumulado (base 100)
+            <h2 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#104063' }}>
+              Rendimiento acumulado (base 0%)
             </h2>
             {!loading && chartData.length > 0 && (
-              <span className="text-xs text-gray-600">
+              <span className="text-xs" style={{ color: '#1B6CA7' }}>
                 {chartData.length} dias de mercado
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-600 mb-6">
+          <p className="text-xs mb-6" style={{ color: '#1B6CA7' }}>
             {mode === 'year' ? year : `${fromDate} — ${toDate}`}
           </p>
 
           {loading ? (
-            <div className="flex items-center justify-center h-80 text-gray-600 text-sm">
+            <div className="flex items-center justify-center h-80 text-sm" style={{ color: '#1B6CA7' }}>
               Obteniendo datos historicos del SP500...
             </div>
           ) : chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#c5dff0" />
                 <XAxis
                   dataKey="timestamp"
                   type="number"
@@ -335,19 +340,19 @@ export default function ScenarioReal() {
                     }
                     return d.toLocaleDateString('es-MX', { month: 'short' });
                   }}
-                  stroke="#374151"
-                  tick={{ fill: '#6b7280', fontSize: 12 }}
+                  stroke="#1B6CA7"
+                  tick={{ fill: '#104063', fontSize: 12 }}
                 />
                 <YAxis
                   tickFormatter={(v: number) => `${v - 100 >= 0 ? '+' : ''}${(v - 100).toFixed(0)}%`}
-                  stroke="#374151"
-                  tick={{ fill: '#6b7280', fontSize: 11 }}
+                  stroke="#1B6CA7"
+                  tick={{ fill: '#104063', fontSize: 11 }}
                   width={60}
                 />
-                <ReferenceLine y={100} stroke="#374151" strokeDasharray="4 4" />
+                <ReferenceLine y={100} stroke="#1B6CA7" strokeDasharray="4 4" />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend
-                  wrapperStyle={{ color: '#6b7280', fontSize: '12px', paddingTop: '16px' }}
+                  wrapperStyle={{ color: '#104063', fontSize: '12px', paddingTop: '16px' }}
                 />
                 <Line
                   type="monotone"
