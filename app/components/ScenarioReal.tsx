@@ -201,7 +201,7 @@ export default function ScenarioReal() {
   const yearOptions = Array.from({ length: CURRENT_YEAR - 1990 }, (_, i) => 1990 + i);
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
+    <div className="min-h-screen text-white p-6">
       <div className="max-w-6xl mx-auto">
 
         <div className="mb-8">

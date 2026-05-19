@@ -131,7 +131,7 @@ export default function RiskDashboard() {
   }, [capital, sp500Drop]);
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
+    <div className="min-h-screen text-white p-6">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
