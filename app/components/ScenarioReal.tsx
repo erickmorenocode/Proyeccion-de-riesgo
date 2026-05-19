@@ -214,7 +214,7 @@ export default function ScenarioReal() {
         {/* Date selector */}
         <div className="flex flex-wrap items-end gap-4 mb-8">
           {/* Mode toggle */}
-          <div className="border rounded-xl p-4" style={{ backgroundColor: '#EEF7FC', borderColor: '#1B6CA7' }}>
+          <div className="border rounded-xl p-4" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
             <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>
               Modo
             </label>
@@ -245,7 +245,7 @@ export default function ScenarioReal() {
           </div>
 
           {mode === 'year' ? (
-            <div className="border rounded-xl p-4" style={{ backgroundColor: '#EEF7FC', borderColor: '#1B6CA7' }}>
+            <div className="border rounded-xl p-4" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
               <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>
                 Año
               </label>
@@ -261,7 +261,7 @@ export default function ScenarioReal() {
               </select>
             </div>
           ) : (
-            <div className="border rounded-xl p-4 flex gap-4" style={{ backgroundColor: '#EEF7FC', borderColor: '#1B6CA7' }}>
+            <div className="border rounded-xl p-4 flex gap-4" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>
                   Desde
@@ -301,7 +301,7 @@ export default function ScenarioReal() {
         )}
 
         {/* Chart */}
-        <div className="border rounded-xl p-6 mb-6" style={{ backgroundColor: '#EEF7FC', borderColor: '#1B6CA7' }}>
+        <div className="border rounded-xl p-6 mb-6" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
           <div className="flex items-baseline justify-between mb-1">
             <h2 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#104063' }}>
               Rendimiento acumulado (base 0%)
