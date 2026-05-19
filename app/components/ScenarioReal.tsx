@@ -90,13 +90,13 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
     day: 'numeric',
   });
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm shadow-xl">
-      <p className="text-gray-400 mb-2 font-medium">{date}</p>
+    <div className="border rounded-lg p-3 text-sm shadow-xl" style={{ backgroundColor: 'rgba(238,247,252,0.95)', borderColor: '#1B6CA7' }}>
+      <p className="mb-2 font-medium" style={{ color: '#104063' }}>{date}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="mb-1">
           <span style={{ color: entry.color }}>{entry.name}: </span>
-          <span className="text-white font-medium">{entry.value.toFixed(1)}</span>
-          <span className="text-gray-500 text-xs ml-1">
+          <span className="font-medium" style={{ color: '#104063' }}>{entry.value.toFixed(1)}</span>
+          <span className="text-xs ml-1" style={{ color: '#1B6CA7' }}>
             ({entry.value >= 100 ? '+' : ''}{(entry.value - 100).toFixed(1)}%)
           </span>
         </div>
@@ -113,13 +113,13 @@ interface StatCardProps {
 }
 
 function StatCard({ label, value, sub, accent = 'neutral' }: StatCardProps) {
-  const border = { red: 'border-red-900/50', green: 'border-green-900/50', neutral: 'border-gray-800' }[accent];
-  const color = { red: 'text-red-400', green: 'text-green-400', neutral: 'text-white' }[accent];
+  const borderColor = { red: 'rgba(239,68,68,0.5)', green: 'rgba(34,197,94,0.5)', neutral: '#1B6CA7' }[accent];
+  const color = { red: 'text-red-500', green: 'text-green-500', neutral: '' }[accent];
   return (
-    <div className={`bg-gray-900 border ${border} rounded-xl p-4`}>
-      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{label}</p>
-      <p className={`text-xl font-bold ${color}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-600 mt-1">{sub}</p>}
+    <div className="border rounded-xl p-4" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor }}>
+      <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#104063' }}>{label}</p>
+      <p className={`text-xl font-bold ${color}`} style={accent === 'neutral' ? { color: '#104063' } : {}}>{value}</p>
+      {sub && <p className="text-xs mt-1" style={{ color: '#1B6CA7' }}>{sub}</p>}
     </div>
   );
 }

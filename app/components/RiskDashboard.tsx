@@ -47,8 +47,8 @@ interface CustomTooltipProps {
 function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm shadow-xl">
-      <p className="text-gray-400 mb-2 font-medium">SP500: -{label}%</p>
+    <div className="border rounded-lg p-3 text-sm shadow-xl" style={{ backgroundColor: 'rgba(238,247,252,0.95)', borderColor: '#1B6CA7' }}>
+      <p className="mb-2 font-medium" style={{ color: '#104063' }}>SP500: -{label}%</p>
       {payload.map((entry) => (
         <p key={entry.dataKey} style={{ color: entry.color }} className="mb-1">
           {entry.name}: {formatCurrency(entry.value)}
@@ -69,25 +69,25 @@ function MetricCard({
   sub?: string;
   accent?: 'red' | 'green' | 'blue' | 'neutral';
 }) {
-  const borderColor = {
-    red: 'border-red-900/50',
-    green: 'border-green-900/50',
-    blue: 'border-blue-900/50',
-    neutral: 'border-gray-800',
+  const borderStyle = {
+    red: 'rgba(239,68,68,0.5)',
+    green: 'rgba(34,197,94,0.5)',
+    blue: 'rgba(59,130,246,0.5)',
+    neutral: '#1B6CA7',
   }[accent ?? 'neutral'];
 
   const textColor = {
-    red: 'text-red-400',
-    green: 'text-green-400',
-    blue: 'text-blue-400',
-    neutral: 'text-white',
+    red: 'text-red-500',
+    green: 'text-green-500',
+    blue: 'text-blue-500',
+    neutral: '',
   }[accent ?? 'neutral'];
 
   return (
-    <div className={`bg-gray-900 border ${borderColor} rounded-xl p-4`}>
-      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{label}</p>
-      <p className={`text-xl font-bold ${textColor}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-600 mt-1">{sub}</p>}
+    <div className="border rounded-xl p-4" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: borderStyle }}>
+      <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#104063' }}>{label}</p>
+      <p className={`text-xl font-bold ${textColor}`} style={!accent || accent === 'neutral' ? { color: '#104063' } : {}}>{value}</p>
+      {sub && <p className="text-xs mt-1" style={{ color: '#1B6CA7' }}>{sub}</p>}
     </div>
   );
 }
@@ -144,29 +144,30 @@ export default function RiskDashboard() {
 
         {/* Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+          <div className="border rounded-xl p-5" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: '#104063' }}>
               Capital Invertido (USD)
             </label>
             <div className="flex items-center gap-2">
-              <span className="text-gray-500 text-xl">$</span>
+              <span className="text-xl font-bold" style={{ color: '#104063' }}>$</span>
               <input
                 type="text"
                 value={capitalRaw}
                 onChange={(e) => setCapitalRaw(e.target.value.replace(/[^0-9.]/g, ''))}
-                className="bg-transparent text-3xl font-bold text-white w-full outline-none placeholder-gray-700 focus:text-blue-300 transition-colors"
+                className="bg-transparent text-3xl font-bold w-full outline-none transition-colors"
+                style={{ color: '#104063' }}
                 placeholder="100,000"
               />
             </div>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+          <div className="border rounded-xl p-5" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: '#104063' }}>
               Supuesto caida SP500:&nbsp;
-              <span className="text-red-400 text-sm font-bold">-{sp500Drop}%</span>
-              <span className="text-gray-600 ml-2 font-normal">
+              <span className="text-red-500 text-sm font-bold">-{sp500Drop}%</span>
+              <span className="ml-2 font-normal" style={{ color: '#1B6CA7' }}>
                 &rarr; portafolio&nbsp;
-                <span className="text-red-400">-{selected.portfolioDrop.toFixed(0)}%</span>
+                <span className="text-red-500">-{selected.portfolioDrop.toFixed(0)}%</span>
               </span>
             </label>
             <input
@@ -178,7 +179,7 @@ export default function RiskDashboard() {
               onChange={(e) => setSp500Drop(Number(e.target.value))}
               className="w-full accent-blue-500 mt-2"
             />
-            <div className="flex justify-between text-xs text-gray-600 mt-1">
+            <div className="flex justify-between text-xs mt-1" style={{ color: '#1B6CA7' }}>
               <span>-5%</span>
               <span>-55%</span>
             </div>
@@ -213,38 +214,38 @@ export default function RiskDashboard() {
         </div>
 
         {/* Chart */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+        <div className="border rounded-xl p-6 mb-6" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
+          <h2 className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#104063' }}>
             Proyeccion por escenario SP500
           </h2>
-          <p className="text-xs text-gray-600 mb-6">
+          <p className="text-xs mb-6" style={{ color: '#1B6CA7' }}>
             Linea azul vertical = escenario seleccionado
           </p>
           <ResponsiveContainer width="100%" height={360}>
             <ComposedChart data={scenarios} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#c5dff0" />
               <XAxis
                 dataKey="sp500Drop"
                 tickFormatter={(v: number) => `-${v}%`}
-                stroke="#374151"
-                tick={{ fill: '#6b7280', fontSize: 12 }}
-                label={{ value: 'Caida SP500', position: 'insideBottom', offset: -2, fill: '#4b5563', fontSize: 11 }}
+                stroke="#1B6CA7"
+                tick={{ fill: '#104063', fontSize: 12 }}
+                label={{ value: 'Caida SP500', position: 'insideBottom', offset: -2, fill: '#104063', fontSize: 11 }}
               />
               <YAxis
                 tickFormatter={formatCurrency}
-                stroke="#374151"
-                tick={{ fill: '#6b7280', fontSize: 11 }}
+                stroke="#1B6CA7"
+                tick={{ fill: '#104063', fontSize: 11 }}
                 width={80}
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend
-                wrapperStyle={{ color: '#6b7280', fontSize: '12px', paddingTop: '20px' }}
+                wrapperStyle={{ color: '#104063', fontSize: '12px', paddingTop: '20px' }}
               />
 
               {/* Initial capital reference */}
               <ReferenceLine
                 y={capital}
-                stroke="#374151"
+                stroke="#1B6CA7"
                 strokeDasharray="4 4"
               />
 
@@ -284,20 +285,20 @@ export default function RiskDashboard() {
 
         {/* Recovery detail */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">SP500 debe recuperar</p>
-            <p className="text-3xl font-bold text-blue-400">+{selected.sp500RecoveryNeeded.toFixed(1)}%</p>
-            <p className="text-xs text-gray-600 mt-2">para volver al nivel pre-caida</p>
+          <div className="border rounded-xl p-5" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>SP500 debe recuperar</p>
+            <p className="text-3xl font-bold text-blue-500">+{selected.sp500RecoveryNeeded.toFixed(1)}%</p>
+            <p className="text-xs mt-2" style={{ color: '#1B6CA7' }}>para volver al nivel pre-caida</p>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Portafolio sube (2x beta)</p>
-            <p className="text-3xl font-bold text-green-400">+{selected.portfolioRecovery.toFixed(1)}%</p>
-            <p className="text-xs text-gray-600 mt-2">desde el minimo de la caida</p>
+          <div className="border rounded-xl p-5" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: '#1B6CA7' }}>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>Portafolio sube (2x beta)</p>
+            <p className="text-3xl font-bold text-green-500">+{selected.portfolioRecovery.toFixed(1)}%</p>
+            <p className="text-xs mt-2" style={{ color: '#1B6CA7' }}>desde el minimo de la caida</p>
           </div>
-          <div className="bg-gray-900 border border-green-900/40 rounded-xl p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Ganancia neta vs inicial</p>
-            <p className="text-3xl font-bold text-green-400">+{formatCurrency(selected.netGain)}</p>
-            <p className="text-xs text-gray-600 mt-2">{selected.netGainPct.toFixed(1)}% retorno total al recuperar</p>
+          <div className="border rounded-xl p-5" style={{ backgroundColor: 'rgba(238,247,252,0.85)', borderColor: 'rgba(34,197,94,0.5)' }}>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#104063' }}>Ganancia neta vs inicial</p>
+            <p className="text-3xl font-bold text-green-500">+{formatCurrency(selected.netGain)}</p>
+            <p className="text-xs mt-2" style={{ color: '#1B6CA7' }}>{selected.netGainPct.toFixed(1)}% retorno total al recuperar</p>
           </div>
         </div>
 
